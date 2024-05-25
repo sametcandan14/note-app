@@ -1,12 +1,29 @@
-import { useRef } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { Button, Col, Form, Row, Stack } from "react-bootstrap";
 import ReactSelect from "react-select/creatable";
+import { NoteData, Tag } from "../../types";
 
-const NoteForm = () => {
+type NoteFormProps = {
+  onSubmit: (data: NoteData) => void;
+};
+
+const NoteForm = ({ onSubmit }: NoteFormProps) => {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    onSubmit({
+      title: titleRef.current!.value,
+      markdown: markdownRef.current!.value,
+      tags: [],
+    });
+  };
+
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Stack gap={4}>
         <Row>
           <Col>
@@ -18,7 +35,23 @@ const NoteForm = () => {
           <Col>
             <Form.Group controlId="tags">
               <Form.Label>Etiketler</Form.Label>
-              <ReactSelect isMulti className="shadow" />
+              <ReactSelect
+                // sahip olacağı etiketler
+                value={selectedTags.map((tag) => ({
+                  label: tag.label,
+                  value: tag.id,
+                }))}
+                onChange={(tags) =>
+                  setSelectedTags(
+                    tags.map((tag) => ({
+                      label: tag.label,
+                      id: tag.value,
+                    }))
+                  )
+                }
+                isMulti
+                className="shadow"
+              />
             </Form.Group>
           </Col>
         </Row>
