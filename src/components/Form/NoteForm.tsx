@@ -1,12 +1,16 @@
-import { useRef } from "react";
+import { FormEvent, useRef } from "react";
 import { Button, Col, Form, Row, Stack } from "react-bootstrap";
 import ReactSelect from "react-select/creatable";
 
 const NoteForm = () => {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+  };
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Stack gap={4}>
         <Row>
           <Col>
