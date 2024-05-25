@@ -1,12 +1,12 @@
 // custom hook
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // react hooklarına benzer görev yapan ama kendi oluşturduğumuz hooklar
 
 // veriyi ve veriyi değiştirecek fonksiyonu dönerler
 
-export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
+export function useLocaleStorage<T>(key: string, initialValue: T | (() => T)) {
   // state i tanımlarız ve ilk değerini locale storagedan alırız.
   const [value, setValue] = useState<T>(() => {
     // localden saklanan değerleri al
@@ -27,4 +27,14 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
       return JSON.parse(jsonValue);
     }
   });
+
+  // use effect kullanarak value her değiştiğinde locale kaydeder.
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  // bileşenlere döndürülecek değer ve fonksiyonu belirleme
+
+  return [value, setValue] as [T, typeof setValue];
 }

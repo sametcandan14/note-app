@@ -2,22 +2,60 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import NewNote from "./components/Form/NewNote";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container } from "react-bootstrap";
-import { RawNote, Tag } from "./types";
-import { useLocalStorage } from "./useLocaleStorage";
+import { NoteData, RawNote, Tag } from "./types";
+import { useLocaleStorage } from "./useLocaleStorage";
+import { v4 } from "uuid";
+import { useMemo } from "react";
 
 function App() {
   const [notes, setNotes] = useLocaleStorage<RawNote[]>("notes", []);
   const [tags, setTags] = useLocaleStorage<Tag[]>("tags", []);
 
-  function onCreateNote(data: []) {
-    console.log(data);
+  // notların etiketlerindeki id değerleri ile eşleşen ekiketleri al
+  // hesaplamayı performans cashle
+
+  const noteWithTags = useMemo(() => {
+    return notes.map((note) => ({
+      ...note,
+      tags: tags.filter((tag) => note.tagIds.includes(tag.id)),
+    }));
+  }, [notes, tags]);
+
+  console.log(noteWithTags);
+
+  //locale yeni not ekler
+  function onCreateNote({ tags, ...data }: NoteData) {
+    setNotes((prev) => {
+      return [
+        ...prev,
+        {
+          ...data,
+          id: v4(),
+          tagIds: tags.map((tag) => tag.id),
+        },
+      ];
+    });
+  }
+
+  //locale yeni etiket ekler
+  function addTag(tag: Tag) {
+    setTags((prev) => [...prev, tag]);
   }
   return (
     <>
       <Container className="my-4">
         <Routes>
           <Route path="/" element={<h1>Anasayfa</h1>} />
-          <Route path="/new" element={<NewNote onSubmit={onCreateNote} />} />
+          <Route
+            path="/new"
+            element={
+              <NewNote
+                onSubmit={onCreateNote}
+                addTag={addTag}
+                availableTags={tags}
+              />
+            }
+          />
           <Route path="/:id">
             <Route index element={<h1>Detay</h1>} />
             <Route path="edit" element={<h1>Düzenleme</h1>} />

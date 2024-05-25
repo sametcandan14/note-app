@@ -1,15 +1,21 @@
-import { NoteData } from "../../types";
+import { NoteData, Tag } from "../../types";
 import NoteForm from "./NoteForm";
 
-type NewNoteProps = {
+export type NewNoteProps = {
   onSubmit: (data: NoteData) => void;
+  addTag: (tag: Tag) => void;
+  availableTags: Tag[];
 };
 
-const NewNote = ({ onSubmit }: NewNoteProps) => {
+const NewNote = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
   return (
     <>
       <h1 className="mb-4">Yeni Not Ekle</h1>
-      <NoteForm onSubmit={onSubmit} />
+      <NoteForm
+        onSubmit={onSubmit}
+        addTag={addTag}
+        availableTags={availableTags}
+      />
     </>
   );
 };

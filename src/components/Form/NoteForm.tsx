@@ -1,15 +1,29 @@
-import { useRef } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { Button, Col, Form, Row, Stack } from "react-bootstrap";
 import ReactSelect from "react-select/creatable";
 import { NoteData, Tag } from "../../types";
+import { NewNoteProps } from "./NewNote";
+import { v4 } from "uuid";
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void;
 };
 
-const NoteForm = ({ onSubmit }: NoteFormProps) => {
+const NoteForm = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
+
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    onSubmit({
+      title: titleRef.current!.value,
+      markdown: markdownRef.current!.value,
+      tags: selectedTags,
+    });
+  };
   return (
     <Form onSubmit={handleSubmit}>
       <Stack gap={4}>
@@ -37,6 +51,13 @@ const NoteForm = ({ onSubmit }: NoteFormProps) => {
                     }))
                   )
                 }
+                //yeni etiket oluşturulduğunda
+                onCreateOption={(label) => {
+                  const newTag: Tag = { id: v4(), label };
+                  addTag(newTag);
+
+                  setSelectedTags((prev) => [...prev, newTag]);
+                }}
                 isMulti
                 className="shadow"
               />
