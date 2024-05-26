@@ -6,6 +6,10 @@ import { NoteData, RawNote, Tag } from "./types";
 import { useLocaleStorage } from "./useLocaleStorage";
 import { v4 } from "uuid";
 import { useMemo } from "react";
+import MainPage from "./MainPage";
+import Layout from "./components/NoteDetail/Layout";
+import NoteDetail from "./components/NoteDetail/NoteDetail";
+import EditNote from "./components/Form/EditNote";
 
 function App() {
   const [notes, setNotes] = useLocaleStorage<RawNote[]>("notes", []);
@@ -20,8 +24,6 @@ function App() {
       tags: tags.filter((tag) => note.tagIds.includes(tag.id)),
     }));
   }, [notes, tags]);
-
-  console.log(noteWithTags);
 
   //locale yeni not ekler
   function onCreateNote({ tags, ...data }: NoteData) {
@@ -45,7 +47,10 @@ function App() {
     <>
       <Container className="my-4">
         <Routes>
-          <Route path="/" element={<h1>Anasayfa</h1>} />
+          <Route
+            path="/"
+            element={<MainPage notes={noteWithTags} availableTags={tags} />}
+          />
           <Route
             path="/new"
             element={
@@ -56,9 +61,9 @@ function App() {
               />
             }
           />
-          <Route path="/:id">
-            <Route index element={<h1>Detay</h1>} />
-            <Route path="edit" element={<h1>Düzenleme</h1>} />
+          <Route path="/:id" element={<Layout notes={noteWithTags} />}>
+            <Route index element={<NoteDetail />} />
+            <Route path="edit" element={<EditNote />} />
           </Route>
           <Route path="*" element={<Navigate to={"/"} />} />
         </Routes>

@@ -4,6 +4,7 @@ import ReactSelect from "react-select/creatable";
 import { NoteData, Tag } from "../../types";
 import { NewNoteProps } from "./NewNote";
 import { v4 } from "uuid";
+import { useNavigate } from "react-router-dom";
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void;
@@ -12,6 +13,7 @@ type NoteFormProps = {
 const NoteForm = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate();
 
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
@@ -23,6 +25,8 @@ const NoteForm = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
       markdown: markdownRef.current!.value,
       tags: selectedTags,
     });
+
+    navigate(-1);
   };
   return (
     <Form onSubmit={handleSubmit}>
@@ -58,6 +62,12 @@ const NoteForm = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
 
                   setSelectedTags((prev) => [...prev, newTag]);
                 }}
+                // daha önceden eklenen etiketleri listeleme
+
+                options={availableTags.map((tag) => ({
+                  label: tag.label,
+                  value: tag.id,
+                }))}
                 isMulti
                 className="shadow"
               />
@@ -78,7 +88,11 @@ const NoteForm = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
         </Form.Group>
         <Stack direction="horizontal" gap={2} className="justify-content-end">
           <Button type="submit">Kaydet</Button>
-          <Button type="button" variant="secondary">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate(-1)}
+          >
             İptal
           </Button>
         </Stack>
