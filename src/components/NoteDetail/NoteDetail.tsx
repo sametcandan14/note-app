@@ -1,5 +1,6 @@
-import { Badge, Col, Row, Stack } from "react-bootstrap";
+import { Badge, Button, Col, Row, Stack } from "react-bootstrap";
 import { useNote } from "./Layout";
+import { Link } from "react-router-dom";
 
 const NoteDetail = () => {
   const note = useNote();
@@ -16,6 +17,17 @@ const NoteDetail = () => {
               ))}
             </Stack>
           )}
+        </Col>
+        <Col xs="auto">
+          <Stack direction="horizontal" gap={2}>
+            <Link to={`/${note.id}/edit`}>
+              <Button>Düzenle</Button>
+            </Link>
+            <Button variant="outline-danger">Sil</Button>
+            <Link to={`/`}>
+              <Button variant="outline-secondary">Geri</Button>
+            </Link>
+          </Stack>
         </Col>
       </Row>
     </>
