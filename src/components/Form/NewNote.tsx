@@ -5,7 +5,7 @@ export type NewNoteProps = {
   onSubmit: (data: NoteData) => void;
   addTag: (tag: Tag) => void;
   availableTags: Tag[];
-};
+} & Partial<NoteData>;
 
 const NewNote = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
   return (

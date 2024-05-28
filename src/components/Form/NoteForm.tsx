@@ -1,21 +1,24 @@
 import { FormEvent, useRef, useState } from "react";
 import { Button, Col, Form, Row, Stack } from "react-bootstrap";
 import ReactSelect from "react-select/creatable";
-import { NoteData, Tag } from "../../types";
+import { Tag } from "../../types";
 import { NewNoteProps } from "./NewNote";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 
-type NoteFormProps = {
-  onSubmit: (data: NoteData) => void;
-};
-
-const NoteForm = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
+const NoteForm = ({
+  onSubmit,
+  addTag,
+  availableTags,
+  title = "",
+  markdown = "",
+  tags = [],
+}: NewNoteProps) => {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
 
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -35,7 +38,12 @@ const NoteForm = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
           <Col>
             <Form.Group controlId="title">
               <Form.Label>Başlık</Form.Label>
-              <Form.Control ref={titleRef} required className="shadow" />
+              <Form.Control
+                ref={titleRef}
+                required
+                className="shadow"
+                defaultValue={title}
+              />
             </Form.Group>
           </Col>
           <Col>
@@ -84,6 +92,7 @@ const NoteForm = ({ onSubmit, addTag, availableTags }: NewNoteProps) => {
             rows={15}
             required
             className="shadow"
+            defaultValue={markdown}
           />
         </Form.Group>
         <Stack direction="horizontal" gap={2} className="justify-content-end">
